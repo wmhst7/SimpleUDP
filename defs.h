@@ -31,7 +31,7 @@
 struct ClientAddr
 {
     uint32_t ip;
-    int port;
+    uint16_t port;
 };
 
 const char INFO_CORRECT[] = "client_info_correct";

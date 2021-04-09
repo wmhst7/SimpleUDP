@@ -15,13 +15,14 @@ void run(int fd, struct sockaddr* dst, struct sockaddr* src)
     while(1)
     {
         printf("send something:");
-        scanf("%s", buf);
+        gets(buf);
+        // scanf("%s", buf);
         len = sizeof(*dst);
-        trace("send:%s\n",buf);  //打印自己发送的信息
+        // trace("send:%s\n",buf);  //打印自己发送的信息
         sendto(fd, buf, BUFF_LEN, 0, dst, len);
         memset(buf, 0, BUFF_LEN);
         recvfrom(fd, buf, BUFF_LEN, 0, (struct sockaddr*)&src, &len);  //接收来自server的信息
-        trace("receive:%s\n",buf);
+        info("receive:%s\n",buf);
     }
 }
 
@@ -30,6 +31,7 @@ int main(int argc, char* argv[])
 {
     int client_fd;
     struct sockaddr_in ser_addr;
+    memset(&ser_addr, 0, sizeof(ser_addr));
     ser_addr.sin_family = AF_INET;
     ser_addr.sin_addr.s_addr = htonl(INADDR_ANY); //注意网络序转换
     ser_addr.sin_port = htons(SERVER_PORT);       //注意网络序转换
@@ -42,22 +44,16 @@ int main(int argc, char* argv[])
         error("create socket fail!\n");
         return -1;
     }
-
-    memset(&ser_addr, 0, sizeof(ser_addr));
-
     // 设置信息
     while (1)
     {
-        printf("Plese type in your user name:");
+        memset(&cli_addr, 0, sizeof(cli_addr));
+        printf("Please type in your user name:");
         scanf("%s", username);
-        printf("Plese type in your ip address:");
+        printf("Please type in your ip address:");
         scanf("%u", &(caddr.ip));
         printf("Plese type in your port:");
-        scanf("%d", &(caddr.port));
-
-        
-
-        socklen_t len;
+        scanf("%hd", &(caddr.port));
 
         cli_addr.sin_family = AF_INET;
         cli_addr.sin_addr.s_addr = htonl(caddr.ip);
@@ -66,16 +62,18 @@ int main(int argc, char* argv[])
         sprintf(buf, "client_info %s %u %d\n", username, caddr.ip, caddr.port);
         bind(client_fd, (struct sockaddr *)&cli_addr, sizeof(cli_addr));
 
-        trace("send:%s\n", buf); //打印自己发送的信息
+        // trace("send:%s\n", buf); //打印自己发送的信息
 
-        len = sizeof(ser_addr);
-
+        socklen_t len = sizeof(ser_addr);
         sendto(client_fd, buf, BUFF_LEN, 0, (struct sockaddr *)&ser_addr, len);
+
         memset(buf, 0, BUFF_LEN);
         recvfrom(client_fd, buf, BUFF_LEN, 0, (struct sockaddr *)&cli_addr, &len); //接收来自server的信息
-        trace("receive:%s\n", buf);
+        info("receive:%s\n", buf);
+
         string res = string(buf);
-        if (res ==  string(INFO_CORRECT))
+        // debug("res:%s, %s", res.c_str(), INFO_CORRECT);
+        if (res == string(INFO_CORRECT))
         {
             break;
         }

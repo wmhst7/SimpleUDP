@@ -1,12 +1,6 @@
 # SimpleUDP
 
-A simple implementation of UDP.
-
-网络编程技术作业
-
-设计并实现一个UDP客户端/服务器，客户端向服务器登记自己发送数据包的IP地址和端口号，同时可以向服务器查询其他用户的IP地址和端口号。要求协议设计和实现可靠、一致。
-
-要求提交说明文档，说明所设计的协议，以及处理方式；要求提交客户端、服务器的源代码；要求用C/C++实现。
+吴明恒 2018011288
 
 ## 协议设计
 
@@ -22,7 +16,7 @@ A simple implementation of UDP.
         * Server返回Client登记失败：`client_info_error`
     * 发送消息
         * Client发送消息：`<用户名> <消息>`
-        * Server确认收到：`Server get %d Bytes`
+        * Server确认收到：`Send %d data success!`
     * 信息查询
         * Client信息查询：`<用户名> get_clients_info`
         * Server返回Client信息：`{<用户名>: }`
@@ -30,19 +24,57 @@ A simple implementation of UDP.
 
 ## 处理流程
 
-
-
 ### Server
 
 1. 初始化
 2. 监听ANY
 3. 如果有新Client加入，记录信息。
-    1. 检查各字段格式，若正确则返回检查正确消息`client_info_correct`
+    * 检查各字段格式，若正确则返回检查正确消息`client_info_correct`
 4. 如果有询问请求，返回所有Client的信息。
+5. 如果接受消息前缀有已注册用户，返回发送成功的消息。
 
 ### Client
 
 1. 初始化
 2. 提示输入本机用户名、IP、Port，完成后发向Server。
 3. 若收到确认消息，则此时可以发送任意信息
-4. 若发送`get_clients_info`，Server应返回所有Client的信息。
+4. 若发送`<用户名> get_clients_info`，Server应返回所有Client的信息。
+
+## 测试效果
+
+1. 启动server
+
+2. 启动client并注册信息
+
+![image-20210409181026240](README.assets/image-20210409181026240.png)
+
+3. 注册多个client
+
+server输出注册成功log，并给client返回正确消息
+
+![image-20210409181222026](README.assets/image-20210409181222026.png)
+
+3. 查询其他client的信息
+
+![image-20210409180956936](README.assets/image-20210409180956936.png)
+
+4. 发送信息成功示例（前缀有已登记的用户名）
+
+![image-20210409181426816](README.assets/image-20210409181426816.png)
+
+5. 发送失败示例（前缀没有已登记的用户名）
+
+表现为Server没有返回信息
+
+![image-20210409181413590](README.assets/image-20210409181413590.png)
+
+
+
+### 运行方法
+
+编译：命令行输入make
+
+运行程序：`./server` `./client`
+
+
+
