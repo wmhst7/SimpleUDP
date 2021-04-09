@@ -18,7 +18,7 @@
         * Server确认收到：`Send %d data success!`
     * 信息查询
         * Client信息查询：`<用户名> get_clients_info`
-        * Server返回Client信息：`{<用户名>: }`
+        * Server返回Client信息：`Client:<用户名>, IP:<IP地址>, Port:<端口号>`
     * 其他
 
 ## 处理流程
